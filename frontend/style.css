@@ -74,6 +74,22 @@ body {
     transform: scale(1.1);
 }
 
+.action-btn {
+    padding: 5px 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    margin-left: 5px;
+}
+
+.action-btn:hover {
+    background-color: #ff5e79;
+}
+
 .canvas-wrapper {
     flex: 1;
     display: flex;

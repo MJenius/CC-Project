@@ -20,6 +20,33 @@ document.querySelectorAll('.color-btn').forEach(btn => {
     });
 });
 
+// Setup Undo/Redo
+document.getElementById('undoBtn').addEventListener('click', () => {
+    if (socket && socket.connected) {
+        const strokeObj = {
+            id: Math.random().toString(36).substring(2, 10),
+            type: 'undo'
+        };
+        localUncommittedStrokes.push(strokeObj);
+        updateUIStats();
+        redrawEverything();
+        socket.emit('draw_stroke', strokeObj);
+    }
+});
+
+document.getElementById('redoBtn').addEventListener('click', () => {
+    if (socket && socket.connected) {
+        const strokeObj = {
+            id: Math.random().toString(36).substring(2, 10),
+            type: 'redo'
+        };
+        localUncommittedStrokes.push(strokeObj);
+        updateUIStats();
+        redrawEverything();
+        socket.emit('draw_stroke', strokeObj);
+    }
+});
+
 function getMousePos(evt) {
     const rect = canvas.getBoundingClientRect();
     return {
@@ -55,6 +82,7 @@ function finishStroke() {
     if (currentStroke.length > 1) {
         const strokeObj = {
             id: Math.random().toString(36).substring(2, 10), // temporary client ID
+            type: 'stroke',
             color: currentColor,
             points: currentStroke
         };
@@ -98,12 +126,38 @@ function drawStrokeFull(stroke) {
     ctx.closePath();
 }
 
+function getActiveStrokes(logStrokes) {
+    const active = [];
+    const undone = [];
+    for (const action of logStrokes) {
+        if (action.type === 'undo') {
+            if (active.length > 0) {
+                undone.push(active.pop());
+            }
+        } else if (action.type === 'redo') {
+            if (undone.length > 0) {
+                active.push(undone.pop());
+            }
+        } else {
+            // treat as normal stroke
+            active.push(action);
+            undone.length = 0; // Clear redo history on new action
+        }
+    }
+    return active;
+}
+
 function redrawEverything() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Draw confirmed
-    confirmedStrokes.forEach(drawStrokeFull);
-    // Draw uncommitted optimistically
-    localUncommittedStrokes.forEach(drawStrokeFull);
+    
+    // Combine committed and uncommitted logs to compute the current state
+    const fullLog = confirmedStrokes.concat(localUncommittedStrokes);
+    
+    // Compute log compensation
+    const active = getActiveStrokes(fullLog);
+    
+    // Draw all active strokes
+    active.forEach(drawStrokeFull);
 }
 
 
