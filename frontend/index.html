@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini-RAFT Collaborative Whiteboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Left panel: the Canvas -->
+        <div class="canvas-container">
+            <div class="toolbar">
+                <h2>Mini-RAFT Drawing Board</h2>
+                <div class="color-picker">
+                    <button class="color-btn" style="background-color: #ff0000;" data-color="#ff0000"></button>
+                    <button class="color-btn" style="background-color: #00ff00;" data-color="#00ff00"></button>
+                    <button class="color-btn" style="background-color: #0000ff;" data-color="#0000ff"></button>
+                    <button class="color-btn active" style="background-color: #000000;" data-color="#000000"></button>
+                </div>
+            </div>
+            <!-- Canvas wrapping wrapper for styling and cursor mgmt -->
+            <div class="canvas-wrapper">
+                <canvas id="drawingBoard" width="800" height="600"></canvas>
+            </div>
+            
+            <div class="status-bar">
+                <span id="connectionStatus" class="disconnected">Disconnected</span>
+                <span id="infoStrokes">Local uncommitted: 0</span>
+            </div>
+        </div>
+
+        <!-- Right panel: Dashboard -->
+        <div class="dashboard-container">
+            <h3>RAFT Cluster Dashboard</h3>
+            <div id="nodesCards" class="nodes-grid">
+                <!-- Node cards injected by JS -->
+            </div>
+            
+            <div class="info-panel">
+                <h4>System Logs (Gateway)</h4>
+                <div id="sysLogs" class="logs-box"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

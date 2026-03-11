@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  gateway:
+    build: ./gateway
+    container_name: gateway
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./gateway:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - miniraft-net
+    environment:
+      - PORT=8080
+      - REPLICAS=http://replica1:3001,http://replica2:3002,http://replica3:3003,http://replica4:3004
+
+  replica1:
+    build: ./replica1
+    container_name: replica1
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./replica1:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - miniraft-net
+    environment:
+      - REPLICA_ID=1
+      - PORT=3001
+      - PEERS=http://replica2:3002,http://replica3:3003,http://replica4:3004
+
+  replica2:
+    build: ./replica2
+    container_name: replica2
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./replica2:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - miniraft-net
+    environment:
+      - REPLICA_ID=2
+      - PORT=3002
+      - PEERS=http://replica1:3001,http://replica3:3003,http://replica4:3004
+
+  replica3:
+    build: ./replica3
+    container_name: replica3
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./replica3:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - miniraft-net
+    environment:
+      - REPLICA_ID=3
+      - PORT=3003
+      - PEERS=http://replica1:3001,http://replica2:3002,http://replica4:3004
+
+  replica4:
+    build: ./replica4
+    container_name: replica4
+    ports:
+      - "3004:3004"
+    volumes:
+      - ./replica4:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - miniraft-net
+    environment:
+      - REPLICA_ID=4
+      - PORT=3004
+      - PEERS=http://replica1:3001,http://replica2:3002,http://replica3:3003
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "80:3000"
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - miniraft-net
+
+networks:
+  miniraft-net:
+    driver: bridge
