@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "docker compose up --build",
+    "stop": "docker compose down",
+    "chaos": "node chaos.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
