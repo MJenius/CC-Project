@@ -43,12 +43,12 @@ docker compose up --build
 ```
 
 This starts:
-- Frontend on `http://localhost`
+- Frontend on `http://localhost:5000`
 - Gateway on `http://localhost:8080`
 - Replicas on `http://localhost:3001` to `http://localhost:3004`
 
 Open your browser at:
-- `http://localhost`
+- `http://localhost:5000`
 
 ## Stop The Project
 
